@@ -49,6 +49,16 @@ How would I improve this Product?
 - User Symfony way of executing Stored Procedures and ofcourse to add parameters
 - Could write SQL function that loops (calling Stored Procedure) and sends filled table, so that only one FOR PHP loop is needed (for years)
 
+How to run
+==========
+on Linux and Mac:
+$> bin/console report:profiles:yearly
+
+On Windows:
+c:\wamp64\www\php-test>php bin/console report:profiles:yearly
+
+Run to output from screen to file:
+c:\wamp64\www\php-test>php bin/console report:profiles:yearly > output.txt
 
 Technical Setup
 ===============
