@@ -39,12 +39,12 @@ class ReportRepository
                     if ($report->getProfileId() == $profile_Data["profile_id"] && date('m', strtotime($report->getDate())) == $month) {
                         $sumTempMonth += $report->getViews();
                     }
-
-                    if ($sumTempMonth > 0) {
-                        $tempRowYearReport[$month+1] = number_format($sumTempMonth);
-                    } else {
-                        $tempRowYearReport[$month+1] = 'n/a';
-                    }
+                }
+                // all years past and future are returning 'n/a' if there is no summarized results
+                if ($sumTempMonth > 0) {
+                    $tempRowYearReport[$month+1] = number_format($sumTempMonth);
+                } else {
+                    $tempRowYearReport[$month+1] = 'n/a';
                 }
             }
             $this->UsersYearReport[] = $tempRowYearReport;
