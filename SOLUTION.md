@@ -3,18 +3,17 @@ SOLUTION
 
 Estimation
 ----------
-Estimated: 5 hours
+Estimated: 15 hours
 
-Spent: 6.5 hours
+Spent: 18 hours
 
 
 Solution
 --------
-Comments on your solution
+I have used OOP PHP5 functionality and basic SQL statements.
 
-I have used basic PHP functionality and basic SQL statements.
-
-I have used console command "php bin/console report:profiles:yearly > output.txt" to catch data and to confirm that my result data comply COA.
+I have used console command "php bin/console report:profiles:yearly display 2016 > output.txt" to catch data and to confirm that my result data comply COA.
+Please se bellow Technical Setup for more detail argument usage! 
 
 
 Test (and edge) cases
@@ -40,18 +39,40 @@ Test case6: I needed clever way to fill and discard array (save memory) with tab
 
 How would I improve this Product?
 ---------------------------------
-- I am out of ideas! :)
+- I admin I did poorly implementation of Repository Pattern. Using Doctrine2 and Symfony Container functionality would benefint greatly.  
 
 Technical Setup
 ===============
 
+Check that you can see in MySQL following tables in `bof_test` database:
+- `profiles`
+- `views`
+- `reports` - added by me
+
+Also to note please run Composer PHPUnit (ver. for PHP 5):
+$> composer require --dev phpunit/phpunit ^5.7
+
+Be careful to use arguments when executing this application, first two are required arguments:
+- sql/file/display/test
+    - sql - result is written in reports sql table
+    - file - result is written in file.txt table
+    - display - result is shown on screen
+    - test - checks if Report class is correctly written
+- numeric year e.g. 2017
+- optinally you can write month in English
+
 How to run app:
 on Linux and Mac:
-$> bin/console report:profiles:yearly
+$> bin/console report:profiles:yearly display 2015
 
 On Windows:
-c:\wamp64\www\php-test>php bin/console report:profiles:yearly
+c:\wamp64\www\php-test>php bin/console report:profiles:yearly display 2015
 
-Run cmd - write output from screen to file:
-$> bin/console report:profiles:yearly > output.txt
-c:\wamp64\www\php-test>php bin/console report:profiles:yearly > output.txt
+Various combinations:
+$> bin/console report:profiles:yearly display 2015 April
+
+$> bin/console report:profiles:yearly sql 2014
+
+$> bin/console report:profiles:yearly file 2016
+
+$> bin/console report:profiles:yearly test 2017
