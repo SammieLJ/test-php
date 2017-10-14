@@ -39,7 +39,7 @@ Test case6: I needed clever way to fill and discard array (save memory) with tab
 
 How would I improve this Product?
 ---------------------------------
-- I admin I did poorly implementation of Repository Pattern. Using Doctrine2 and Symfony Container functionality would benefint greatly.  
+- I admin I did poor implementation of Repository Pattern. Using Doctrine2 and Symfony Container functionality would benefint greatly.  
 
 Technical Setup
 ===============
@@ -76,3 +76,13 @@ $> bin/console report:profiles:yearly sql 2014
 $> bin/console report:profiles:yearly file 2016
 
 $> bin/console report:profiles:yearly test 2017
+
+
+What to do in case of 100K+ profiles and 100M+ views
+----------------------------------------------------
+I would suggest to use
+- web server load balancer
+- web server cache manager like memcache or varnish
+- MySQL replication, master-slave configuration of sql servers
+
+
