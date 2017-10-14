@@ -1,14 +1,14 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: StormTrooper
+ * @author: Samir Subašić
  * Date: 12.10.2017
  * Time: 15:14
  */
 
-namespace BOF\Command;
+namespace BOF\Repository;
+
 use BOF\Model\Months;
-use BOF\Repository\ReportRepository;
 
 /**
  * Class ReportSQLCommand
@@ -17,40 +17,30 @@ use BOF\Repository\ReportRepository;
 class ReportSQLCommand
 {
     private $db;
-    private $display_to;
+
+    // sigle value
     private $report_year;
     private $report_month;
 
     /**
      * ReportSQLCommand constructor.
      */
-    public function __construct($db, $display_to, $report_year, $report_month)
+    public function __construct($db, $report_year, $report_month)
     {
         $this->db = $db;
-        $this->display_to = $display_to;
         $this->report_year = $report_year;
         $this->report_month = $report_month;
     }
 
-    // security reason. Cannot directly expose SQL executing method, use of proxy public method
-    public function execute($whichCmd = 'GetData', $reportsArray = NULL){
-        switch ($whichCmd) {
-            case 'GetData':
-                return $this->getDataSQLCmd();
-                break;
-            case 'UpdateReports':
-                return $this->updateReportsTableSQLCmd($reportsArray);
-                break;
-        }
-    }
-
-    private function getDataSQLCmd()
-    {
+    public function getProfiles() {
         //get array of users IDs and their Names sorted alphabeticaly
         $profiles = $this->db->query('SELECT p.* FROM profiles p ORDER BY p.profile_name;')->fetchAll();
+        return $profiles;
 
-        //Get array of months (from class Months)
-        //$Months = \BOF\Model\Months::$MonthList;
+    }
+
+    public function getAllYearlyReports()
+    {
         $Months = Months::$MonthList;
 
         // set sql statement
@@ -63,23 +53,18 @@ class ReportSQLCommand
             $sqlString .= sprintf(" AND MONTH(Date)=%s", $Months[$this->report_month]);
         }
 
-        // alphabetical order
+        // add alphabetical order
         $sqlString .= " ORDER BY p.profile_name";
 
-        // execute sql
+        // execute sql and get all data
         $yearlyReportFromSQL = $this->db->query($sqlString)->fetchAll();
 
-        $createReports = new ReportRepository($profiles, $Months, $yearlyReportFromSQL);
-        $listOfReports = $createReports->setReportsCollection();
-
-
-        $createReports->buildYearlyReport($listOfReports);
-        return $createReports->getYearlyReport();
+        return $yearlyReportFromSQL;
     }
 
-    private function updateReportsTableSQLCmd($reportsArray) {
-        if (isset($reportsArray) && !is_null($reportsArray)) {
+    public function updateReportsTableSQLCmd($reportsArray) {
 
+        if (isset($reportsArray) && !is_null($reportsArray)) {
             // delete previous data in sql
             $this->db->query('DELETE FROM reports')->execute();
 

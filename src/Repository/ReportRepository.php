@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: StormTrooper
+ * @author: Samir Subašić
  * Date: 12.10.2017
  * Time: 15:13
  */
@@ -9,30 +9,48 @@
 namespace BOF\Repository;
 
 use BOF\Model\Report;
+use BOF\Model\Months;
 
 class ReportRepository
 {
+    // arrays
+    private $profiles;
     private $yearlyReport;
+    private $months;
 
-    //get summarized data per year
+    // array of Report objects - single row in sql is one Report object
+    private $listOfReports;
+
+    //get summarized data per year - arrays
     private $UsersYearReport = [];
+
+    // sigle value
+    private $report_year;
+    private $report_month;
+
+    //class
+    private $reportSQLCmd;
 
     /**
      * ReportRepository constructor.
      */
-    public function __construct($profiles, $Months, $yearlyReport)
+    public function __construct($db, $report_year, $report_month)
     {
-        $this->profiles = $profiles;
-        $this->Months = $Months;
-        $this->yearlyReport = $yearlyReport;
+        $this->report_year = $report_year;
+        $this->report_month = $report_month;
+
+        $this->reportSQLCmd = new ReportSQLCommand($db, $this->report_year, $this->report_month);
     }
 
     public function buildYearlyReport($listOfReports) {
+        //Get array of months (from class Months)
+        $this->months = Months::$MonthList;
+
         foreach($this->profiles as $profile => $profile_Data) {
             $tempRowYearReport = array();
             $tempRowYearReport[1] = $profile_Data["profile_name"];
 
-            foreach ($this->Months as $key => $month) {
+            foreach ($this->months as $key => $month) {
 
                 $sumTempMonth = 0;
                 foreach($listOfReports as $report) {
@@ -74,5 +92,25 @@ class ReportRepository
             }
         }
         return $collection;
+    }
+
+    // create array of Reports, every entry is stored (info) to Report object
+    public function buildProfilesAndYearlyReports() {
+        $this->profiles = $this->reportSQLCmd->getProfiles();
+        $this->yearlyReport = $this->reportSQLCmd->getAllYearlyReports();
+        $this->listOfReports = $this->setReportsCollection();
+
+        // create array of summarized views per month for every user
+        $this->buildYearlyReport($this->listOfReports);
+    }
+
+    public function insertAndUpdateReportsTableInSQL() {
+        // check if summarized users year report list is full
+        if (isset($this->UsersYearReport)&& !is_null($this->UsersYearReport)) {
+            $this->reportSQLCmd->updateReportsTableSQLCmd($this->UsersYearReport);
+        } else {
+            $this->buildProfilesAndYearlyReports();
+            $this->reportSQLCmd->updateReportsTableSQLCmd($this->UsersYearReport);
+        }
     }
 }
