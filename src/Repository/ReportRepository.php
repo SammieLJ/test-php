@@ -105,12 +105,6 @@ class ReportRepository
     }
 
     public function insertAndUpdateReportsTableInSQL() {
-        // check if summarized users year report list is full
-        if (isset($this->UsersYearReport)&& !is_null($this->UsersYearReport)) {
-            $this->reportSQLCmd->updateReportsTableSQLCmd($this->UsersYearReport);
-        } else {
-            $this->buildProfilesAndYearlyReports();
-            $this->reportSQLCmd->updateReportsTableSQLCmd($this->UsersYearReport);
-        }
+        $this->reportSQLCmd->updateReportsTableSQLCmd($this->UsersYearReport);
     }
 }
