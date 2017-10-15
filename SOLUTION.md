@@ -82,7 +82,7 @@ What to do in case of 100K+ profiles and 100M+ views
 ----------------------------------------------------
 I would suggest to use
 - web server load balancer
-- web server cache manager like memcache or varnish
+- web server cache manager like memcache or varnish or OPcache
 - MySQL replication, master-slave configuration of sql servers
 
 
