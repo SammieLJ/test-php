@@ -42,7 +42,7 @@ class ReportRepository
         $this->reportSQLCmd = new ReportSQLCommand($db, $this->report_year, $this->report_month);
     }
 
-    public function buildYearlyReport($listOfReports) {
+    public function buildYearlyReport() {
         //Get array of months (from class Months)
         $this->months = Months::$MonthList;
 
@@ -53,7 +53,7 @@ class ReportRepository
             foreach ($this->months as $key => $month) {
 
                 $sumTempMonth = 0;
-                foreach($listOfReports as $report) {
+                foreach($this->listOfReports as $report) {
                     if ($report->getProfileId() == $profile_Data["profile_id"] && date('m', strtotime($report->getDate())) == $month) {
                         $sumTempMonth += $report->getViews();
                     }
@@ -94,14 +94,16 @@ class ReportRepository
         return $collection;
     }
 
-    // create array of Reports, every entry is stored (info) to Report object
+    /**
+     * create array of Reports, every entry is stored (info) to Report object
+     */
     public function buildProfilesAndYearlyReports() {
         $this->profiles = $this->reportSQLCmd->getProfiles();
         $this->yearlyReport = $this->reportSQLCmd->getAllYearlyReports();
         $this->listOfReports = $this->setReportsCollection();
 
         // create array of summarized views per month for every user
-        $this->buildYearlyReport($this->listOfReports);
+        $this->buildYearlyReport();
     }
 
     public function insertAndUpdateReportsTableInSQL() {
